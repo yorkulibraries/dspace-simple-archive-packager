@@ -8,21 +8,9 @@ The function of this script is to do the create [Dspace Simple Archives](https:/
 
 ##Installation
 
-1. Clone the repo to wherever you want it to live:
+Clone the repo to wherever you want it to live (this will also install the submodule):
 
-    `git clone https://github.com/yorkulibraries/dspace-simple-archive-packager.git`
-
-2. Install the dependency/submodule
-
-    This does have one submodule dependency, a python script that takes the xlsx and converts it to a csv with escaped newlines.
-
-    Grab the submodule by running this command with the script repo:
-
-    `git submodule update --recursive`
-
-3. Make the script executable
-
-    `chmod +x dspace-simple-archive-packager.sh`
+    `git clone --recursive https://github.com/yorkulibraries/dspace-simple-archive-packager.git`
     
 ##Usage
 
