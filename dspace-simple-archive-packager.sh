@@ -17,6 +17,7 @@ while getopts :d:o:s:h opt; do
         ;;
     o)
         objects=$OPTARG
+        object_path=$(echo $objects | sed 's/\/$//g')
         ;;
     s)
         suffix=$OPTARG
@@ -67,16 +68,16 @@ sudo python xlsx2csv/xlsx2csv.py -e -d $delimiter $1 $csv
 make_simple_archive_format_package () {
 #looks in the directory of objects you have and 
 #iterates over them
-for i in $objects*
+for i in $object_path/*$suffix
 do
     id=$(basename $i .$suffix)
     #creates each package directory
-    mkdir record.$id
+    mkdir $object_path/record.$id
     #copies the objects into the package
-    cp $i record.$id
+    cp $i $object_path/record.$id
     #this creates the required 'contents' files 
     #as specified in the DSpace Simple Archival Format
-    echo $id.$suffix > record.$id/contents
+    echo $id.$suffix > $object_path/record.$id/contents
 done 
 }
 
@@ -123,7 +124,7 @@ for header in "${all_headers[@]}"; do
     #this writes the tag. The 'printf '%b\n'' is what 
     #allows us to restore the newlines in the xml 
     #(since csv doesn't handle them gracefully.
-    printf '%b\n' "<dcvalue element=\"$element\" qualifier=\"$qualifier\">$field</dcvalue>" >> record.$dc_identifier/dublin_core.xml
+    printf '%b\n' "<dcvalue element=\"$element\" qualifier=\"$qualifier\">$field</dcvalue>" >> $object_path/record.$dc_identifier/dublin_core.xml
     c1=$((c1+1))
 done
 #calls the footer to close the xml record.
@@ -135,7 +136,7 @@ IFS=$OLDIFS
 make_dc_record () {
 
 #loop to iterate over all the objects in the directory
-for i in $objects*
+for i in $object_path/*$suffix
 do    
     #grabs the identifier need in the make_dc_body 
     #function.
@@ -148,7 +149,7 @@ done
 #for turning ampersands into character entities.
 clean_ampersands () {
 #iterates over all the xml records
-for i in record.*/dublin_core.xml 
+for i in $object_path/record.*/dublin_core.xml 
 do
     #searches for all & and replaces with the 
     #entity code.
