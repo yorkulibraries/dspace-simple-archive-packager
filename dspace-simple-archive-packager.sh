@@ -60,9 +60,9 @@ shift $((OPTIND -1))
 #change the delimiter. You want one that is *not* 
 #contained in any of the fields, otherwise your data 
 #will be parsed in strange ways later on.
-file_name=$( basename $xlsx .xlsx )
+file_name=$( basename $1 .xlsx )
 csv="$file_name.csv"
-sudo python xlsx2csv/xlsx2csv.py -e -d $delimiter $1 $csv
+sudo python xlsx2csv/xlsx2csv.py -e -d $delimiter $1 /tmp/$csv
 
 #the function to make packages
 make_simple_archive_format_package () {
@@ -83,13 +83,13 @@ done
 
 #creates the start of the dublin core record.
 make_dc_header () {
-echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > record.$dc_identifier/dublin_core.xml
-echo "<dublin_core>" >> record.$dc_identifier/dublin_core.xml
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > $object_path/record.$dc_identifier/dublin_core.xml
+echo "<dublin_core>" >> $object_path/record.$dc_identifier/dublin_core.xml
 }
 
 #creates the closing tag
 make_dc_footer () {
-echo "</dublin_core>" >> record.$dc_identifier/dublin_core.xml
+echo "</dublin_core>" >> $object_path/record.$dc_identifier/dublin_core.xml
 }
 
 #Function to populate the dublin_core.xml needed 
@@ -102,10 +102,10 @@ IFS='^'
 c1=1
 #grabs the headers of the csv file and the second 
 #command reads it into an array.
-header_row=$(head -n1 $csv)
+header_row=$(head -n1 /tmp/$csv)
 read -a all_headers x <<< "$header_row"
 #creates a temporary csv with no headers
-sed 1,1d $csv > /tmp/no_headers.csv
+sed 1,1d /tmp/$csv > /tmp/no_headers.csv
 #starts counter for cut
 #calls the header function
 make_dc_header
@@ -115,7 +115,7 @@ for header in "${all_headers[@]}"; do
     #The field variable searches for the identifier, 
     #grabs the associated record, and splits it into 
     #distinct fields.
-    field=$(grep "$dc_identifier" $csv | cut -d"$delimiter" -f $c1)
+    field=$(grep "$dc_identifier" /tmp/$csv | cut -d"$delimiter" -f $c1)
     #these following two take the headers and use the
     #structure to fill in the attributes for the 
     #<dcvalue> tag.
