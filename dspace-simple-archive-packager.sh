@@ -98,14 +98,14 @@ make_dc_body () {
 #this is just to reset the field seperator to 
 #the default 
 OLDIFS=$IFS
-IFS='^'
+IFS="$delimiter"
 c1=1
 #grabs the headers of the csv file and the second 
 #command reads it into an array.
 header_row=$(head -n1 /tmp/$csv)
 read -a all_headers x <<< "$header_row"
 #creates a temporary csv with no headers
-sed 1,1d /tmp/$csv > /tmp/no_headers.csv
+sed 1,2d /tmp/$csv > /tmp/no_headers.csv
 #starts counter for cut
 #calls the header function
 make_dc_header
@@ -119,8 +119,8 @@ for header in "${all_headers[@]}"; do
     #these following two take the headers and use the
     #structure to fill in the attributes for the 
     #<dcvalue> tag.
-    element=$(echo "$header" | cut -d'_' -f1)
-    qualifier=$(echo "$header" | cut -d'_' -f2)
+    element=$(echo "$header" | sed 's/dc\.//g' | cut -d'.' -f1)
+    qualifier=$(echo "$header" | sed 's/dc\.//g' | cut -d'.' -f2)
     #this writes the tag. The 'printf '%b\n'' is what 
     #allows us to restore the newlines in the xml 
     #(since csv doesn't handle them gracefully.
