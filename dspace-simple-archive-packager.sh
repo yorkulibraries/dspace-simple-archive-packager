@@ -116,6 +116,7 @@ for header in "${all_headers[@]}"; do
     #grabs the associated record, and splits it into 
     #distinct fields.
     field=$(grep "$dc_identifier" /tmp/$csv | cut -d"$delimiter" -f $c1)
+    esc_field=$(escape_char "$field")
     #these following two take the headers and use the
     #structure to fill in the attributes for the 
     #<dcvalue> tag.
@@ -124,7 +125,7 @@ for header in "${all_headers[@]}"; do
     #this writes the tag. The 'printf '%b\n'' is what 
     #allows us to restore the newlines in the xml 
     #(since csv doesn't handle them gracefully.
-    printf '%b\n' "<dcvalue element=\"$element\" qualifier=\"$qualifier\">$field</dcvalue>" >> $object_path/record.$dc_identifier/dublin_core.xml
+    printf '%b\n' "<dcvalue element=\"$element\" qualifier=\"$qualifier\">$esc_field</dcvalue>" >> $object_path/record.$dc_identifier/dublin_core.xml
     c1=$((c1+1))
 done
 #calls the footer to close the xml record.
@@ -146,18 +147,10 @@ do
 done
 }
 
-#for turning ampersands into character entities.
-clean_ampersands () {
-#iterates over all the xml records
-for i in $object_path/record.*/dublin_core.xml 
-do
-    #searches for all & and replaces with the 
-    #entity code.
-    sed -i 's/&/&amp;/g' $i
-done
+escape_char () {
+  echo "$1" | sed 's/&/\&amp;/g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g' | sed 's/"/\&quot;/g' | sed "s/'/\&apos;/g"
 }
 
 #call all the functions to do all the things.
 make_simple_archive_format_package
 make_dc_record
-clean_ampersands
