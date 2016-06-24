@@ -99,10 +99,10 @@ make_dc_body () {
 #the default 
 OLDIFS=$IFS
 IFS="$delimiter"
-c1=1
+c1=2
 #grabs the headers of the csv file and the second 
 #command reads it into an array.
-header_row=$(head -n1 /tmp/$csv)
+header_row=$(head -n1 /tmp/$csv | sed "s/dc\.identifier\.none@//")
 read -a all_headers x <<< "$header_row"
 #creates a temporary csv with no headers
 sed 1,2d /tmp/$csv > /tmp/no_headers.csv
@@ -154,3 +154,4 @@ escape_char () {
 #call all the functions to do all the things.
 make_simple_archive_format_package
 make_dc_record
+#clean_ampersands
