@@ -102,7 +102,7 @@ IFS="$delimiter"
 c1=2
 #grabs the headers of the csv file and the second 
 #command reads it into an array.
-header_row=$(head -n1 /tmp/$csv | sed "s/dc\.identifier\.none@//")
+header_row=$(head -n1 /tmp/$csv | sed "s/dc\.identifier\.none$delimiter//")
 read -a all_headers x <<< "$header_row"
 #creates a temporary csv with no headers
 sed 1,2d /tmp/$csv > /tmp/no_headers.csv
