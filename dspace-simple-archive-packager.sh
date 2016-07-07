@@ -78,6 +78,10 @@ do
     #this creates the required 'contents' files 
     #as specified in the DSpace Simple Archival Format
     echo $id.$suffix > $object_path/record.$id/contents
+    cp license.txt $object_path/record.$id/
+    echo -e "license.txt\tbundle:license" >> $object_path/record.$id/contents
+    cp YorkU_ETDlicense.txt $object_path/record.$id/
+    echo -e "YorkU_ETDlicense.txt\tbundle:license" >> $object_path/record.$id/contents
 done 
 }
 
@@ -125,7 +129,10 @@ for header in "${all_headers[@]}"; do
     #this writes the tag. The 'printf '%b\n'' is what 
     #allows us to restore the newlines in the xml 
     #(since csv doesn't handle them gracefully.
-    printf '%b\n' "<dcvalue element=\"$element\" qualifier=\"$qualifier\">$esc_field</dcvalue>" >> $object_path/record.$dc_identifier/dublin_core.xml
+    if [ ${#esc_field} -gt '0' ]
+    then
+      printf '%b\n' "<dcvalue element=\"$element\" qualifier=\"$qualifier\">$esc_field</dcvalue>" >> $object_path/record.$dc_identifier/dublin_core.xml
+    fi
     c1=$((c1+1))
 done
 #calls the footer to close the xml record.
@@ -154,4 +161,3 @@ escape_char () {
 #call all the functions to do all the things.
 make_simple_archive_format_package
 make_dc_record
-#clean_ampersands
