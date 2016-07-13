@@ -79,9 +79,9 @@ do
     #as specified in the DSpace Simple Archival Format
     echo $id.$suffix > $object_path/record.$id/contents
     cp license.txt $object_path/record.$id/
-    echo -e "license.txt\tbundle:license" >> $object_path/record.$id/contents
+    echo -e "license.txt\tbundle:LICENSE" >> $object_path/record.$id/contents
     cp YorkU_ETDlicense.txt $object_path/record.$id/
-    echo -e "YorkU_ETDlicense.txt\tbundle:license" >> $object_path/record.$id/contents
+    echo -e "YorkU_ETDlicense.txt\tbundle:LICENSE" >> $object_path/record.$id/contents
 done 
 }
 
